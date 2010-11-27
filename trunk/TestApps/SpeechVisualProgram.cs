@@ -46,6 +46,8 @@ namespace TestApps {
             cameraCapture = new CameraCapture(0);
             trackMe = new TrackMe(cameraCapture);
 
+            trackMe.TrackedPoint = new PointF(trackMe.FrameSize.Width / 2, trackMe.FrameSize.Height / 2);
+
             scr.SpeechEnabled = true;
 
             while (true) {
@@ -60,17 +62,20 @@ namespace TestApps {
                     break;
                 }
             }
+
+            CvInvoke.cvDestroyWindow("TestProgram");
+
             Application.Exit();
         }
 
         private void DrawDebugWindow() {
             Image<Bgr, byte> image = cameraCapture.CreateImageBgrCopy();
 
-            for (int i = 0; i < trackMe.currentPoints.Length; i++) {
-                image.Draw(new CircleF(new Point((int)trackMe.currentPoints[i].X, (int)trackMe.currentPoints[i].Y), 3), new Bgr(0, 255, 0), -1);
+            for (int i = 0; i < trackMe.CurrentPoints.Length; i++) {
+                image.Draw(new CircleF(new Point((int)trackMe.CurrentPoints[i].X, (int)trackMe.CurrentPoints[i].Y), 3), new Bgr(0, 255, 0), -1);
 
-                PointF middle = trackMe.GetMiddle();
-                image.Draw(new CircleF(new Point((int)middle.X, (int)middle.Y), 5), new Bgr(0, 0, 255), -1);
+                PointF trackedPoint = trackMe.TrackedPoint;
+                image.Draw(new CircleF(new Point((int)trackedPoint.X, (int)trackedPoint.Y), 5), new Bgr(0, 0, 255), -1);
             }
 
             CvInvoke.cvShowImage("TestProgram", image);
@@ -79,13 +84,14 @@ namespace TestApps {
         public void WordRecognizedHandler(ISpeechPhraseProperty recognizedPhrase) {
             if (recognizedPhrase.EngineConfidence >= 0.1) {
                 if (recognizedPhrase.Name == "los") {
-                    trackMe.startTracking();
+                    trackMe.Tracking = true;
                     textToSpeech.Speak("Tracking started");
                 } else if (recognizedPhrase.Name == "aufhören") {
-                    trackMe.stopTracking();
+                    trackMe.Tracking = false;
+                    trackMe.TrackedPoint = new PointF(trackMe.FrameSize.Width / 2, trackMe.FrameSize.Height / 2);
                     textToSpeech.Speak("Okay, I stopped");
                 } else if (recognizedPhrase.Name == "neustart") {
-                    trackMe.initialize();
+                    trackMe.TrackedPoint = new PointF(trackMe.FrameSize.Width / 2, trackMe.FrameSize.Height / 2);
                     textToSpeech.Speak("Restarting");
                 } else if (recognizedPhrase.Name == "beenden") {
                     textToSpeech.Speak("Goodbye!", SpeechVoiceSpeakFlags.SVSFDefault);

@@ -29,11 +29,11 @@ namespace SpykeeVision.Sandbox {
                 if (nightMode)
                     CvInvoke.cvZero(image);
 
-                for (int i = 0; i < trackMe.currentPoints.Length; i++) {
-                    image.Draw(new CircleF(new Point((int)trackMe.currentPoints[i].X, (int)trackMe.currentPoints[i].Y), 3), new Bgr(0, 255, 0), -1);
+                for (int i = 0; i < trackMe.CurrentPoints.Length; i++) {
+                    image.Draw(new CircleF(new Point((int)trackMe.CurrentPoints[i].X, (int)trackMe.CurrentPoints[i].Y), 3), new Bgr(0, 255, 0), -1);
 
-                    PointF middle = trackMe.GetMiddle();
-                    image.Draw(new CircleF(new Point((int)middle.X, (int)middle.Y), 5), new Bgr(0, 0, 255), -1);
+                    PointF trackedPoint = trackMe.TrackedPoint;
+                    image.Draw(new CircleF(new Point((int)trackedPoint.X, (int)trackedPoint.Y), 5), new Bgr(0, 0, 255), -1);
                 }
 
                 CvInvoke.cvShowImage("LkDemo", image);
@@ -43,10 +43,15 @@ namespace SpykeeVision.Sandbox {
                     break;
                 switch ((char)c) {
                     case ' ':
-                        trackMe.toggleTracking();
+                        if (trackMe.Tracking) {
+                            trackMe.Tracking = false;
+                            trackMe.TrackedPoint = new PointF(trackMe.FrameSize.Width / 2, trackMe.FrameSize.Height / 2);
+                        } else {
+                            trackMe.Tracking = true;
+                        }
                         break;
                     case 'r':
-                        trackMe.initialize();
+                        trackMe.TrackedPoint = new PointF(trackMe.FrameSize.Width / 2, trackMe.FrameSize.Height / 2);
                         break;
                     case 'n':
                         nightMode = !nightMode;
@@ -55,6 +60,8 @@ namespace SpykeeVision.Sandbox {
                         break;
                 }
             }
+
+            CvInvoke.cvDestroyWindow("LkDemo");
 
             /*
             String win1 = "Test Window"; //The name of the window
