@@ -12,7 +12,7 @@ namespace SpykeeAudio {
         private const int grammarId = 10;
         private bool speechEnabled;
         private bool speechInitialized;
-        private String PreCommandString = "Select";
+        private String PreCommandString;
         private SpeechLib.SpInProcRecoContext objRecoContext;
         private SpeechLib.ISpeechRecoGrammar grammar;
         private SpeechLib.ISpeechGrammarRule ruleTopLevel;
@@ -20,6 +20,11 @@ namespace SpykeeAudio {
 
         public delegate void WordRecognizedHandler(ISpeechPhraseProperty recognizedPhrase);
         public event WordRecognizedHandler WordRecognized;
+
+        public SpeechCommandRecognition(String preCommandString) {
+            PreCommandString = preCommandString;
+            SpeechEnabled = false;
+        }
 
         /// <summary>
         ///     AddItem is used to add a newitem to the list item collection.

@@ -13,7 +13,7 @@ namespace SpykeeAudio.Sandbox {
         }
 
         public void Start() {
-            SpeechCommandRecognition scr = new SpeechCommandRecognition();
+            SpeechCommandRecognition scr = new SpeechCommandRecognition("select");
 
             scr.SpeechEnabled = true;
             scr.AddItem("Test");

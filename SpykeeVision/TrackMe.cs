@@ -10,51 +10,33 @@ using System.Drawing;
 
 namespace SpykeeVision {
     public class TrackMe {
-        const int POINT_COUNT = 50;
-        int minDistance = 5;
-        int maxDistance = 50;
-        float errorDistanceSqrt = 60*60;
+        private const int POINT_COUNT = 50;
+        private int minDistance = 5;
+        private int maxDistance = 50;
+        private float errorDistanceSqrt = 60 * 60;
 
-        Image<Bgr, byte> image;
-        Image<Gray, byte> grey, prev_grey, pyramid, prev_pyramid;
+        private Image<Gray, byte> grey, prev_grey, pyramid, prev_pyramid;
 
-        int win_size = 10;
+        private int win_size = 10;
 
-        PointF[] currentPoints;
-        PointF[] previousPoints;
-        byte[] status;
-        bool nightMode = false;
-        LKFLOW_TYPE flags = 0;
+        public PointF[] currentPoints;
+        private PointF[] previousPoints;
+        private byte[] status;
+        private LKFLOW_TYPE flags = 0;
 
-        bool tracking = false;
+        private bool tracking = false;
 
-        Capture capture;
-        Image<Bgr, byte> frame;
+        private CameraCapture capture;
 
-        public TrackMe() {
-            capture = new Capture(0);
+        public PointF[] CurrentPoints { get { return currentPoints; } }
 
-            if (capture == null) {
-                throw new Exception("Could not initialize capturing...\n");
-            }
+        public TrackMe(CameraCapture capture) {
+            this.capture = capture;
 
-            System.Console.Write("Hot keys: \n" +
-                    "\tESC - quit the program\n" +
-                    "\tr - auto-initialize tracking\n" +
-                    "\tn - switch the \"night\" mode on/off\n" +
-                    "To add/remove a feature point click it\n");
-
-            CvInvoke.cvNamedWindow("LkDemo");
-            //CvInvoke.cvSetMouseCallback("LkDemo", on_mouse, 0 );
-            //ImageBox imageBox = new ImageBox();
-
-            frame = capture.QueryFrame();
-
-            image = new Image<Bgr, byte>(frame.Size);
-            grey = new Image<Gray, byte>(image.Size);
-            prev_grey = new Image<Gray, byte>(frame.Size);
-            pyramid = new Image<Gray, byte>(frame.Size);
-            prev_pyramid = new Image<Gray, byte>(frame.Size);
+            grey = new Image<Gray, byte>(capture.FrameSize);
+            prev_grey = new Image<Gray, byte>(capture.FrameSize);
+            pyramid = new Image<Gray, byte>(capture.FrameSize);
+            prev_pyramid = new Image<Gray, byte>(capture.FrameSize);
 
             flags = LKFLOW_TYPE.DEFAULT;
 
@@ -67,18 +49,12 @@ namespace SpykeeVision {
             CvInvoke.cvDestroyWindow("LkDemo");
         }
 
-        public Boolean Process() {
-            int i, k, c;
-
-            frame = capture.QueryFrame();
+        public void Update() {
+            Image<Bgr, byte> frame = capture.Frame;
             if (frame == null)
-                return false;
+                throw new Exception("No camera frame");
 
-            image.Bitmap = frame.Bitmap;
-            grey.Bitmap = image.Bitmap;
-
-            if (nightMode)
-                CvInvoke.cvZero(image);
+            grey.Bitmap = frame.Bitmap;
 
             if (currentPoints.Length > 0) {
                 if (tracking) {
@@ -88,44 +64,11 @@ namespace SpykeeVision {
 
                     CheckPoints();
                 }
-
-                for (i = k = 0; i < currentPoints.Length; i++) {
-                    if (tracking) {
-                        if (status[i] == 0)
-                            continue;
-                    }
-
-                    currentPoints[k++] = currentPoints[i];
-                    image.Draw(new CircleF(new Point((int)currentPoints[i].X, (int)currentPoints[i].Y), 3), new Bgr(0, 255, 0), -1);
-
-                    PointF middle = GetMiddle();
-                    image.Draw(new CircleF(new Point((int)middle.X, (int)middle.Y), 5), new Bgr(0, 0, 255), -1);
-                }
             }
 
             prev_grey.Bitmap = grey.Bitmap;
             prev_pyramid.Bitmap = pyramid.Bitmap;
             previousPoints = currentPoints;
-            CvInvoke.cvShowImage("LkDemo", image);
-
-            c = CvInvoke.cvWaitKey(10);
-            if ((char)c == 27)
-                return false;
-            switch ((char)c) {
-                case ' ':
-                    toggleTracking();
-                    break;
-                case 'r':
-                    initialize();
-                    break;
-                case 'n':
-                    nightMode = !nightMode;
-                    break;
-                default:
-                    break;
-            }
-
-            return true;
         }
 
         public void startTracking() {
@@ -194,7 +137,7 @@ namespace SpykeeVision {
             p.Y = middle.Y + v.Y * distance;
         }
 
-        protected PointF GetMiddle() {
+        public PointF GetMiddle() {
             PointF middle = new PointF();
 
             foreach (PointF p in currentPoints) {
@@ -213,10 +156,20 @@ namespace SpykeeVision {
             for (int i = 0; i < currentPoints.Length; i++) {
                 PointF p = currentPoints[i];
 
-                float dx = p.X - middle.X;
-                float dy = p.Y - middle.Y;
-                float distSqrt = dx * dx + dy * dy;
-                if (distSqrt > errorDistanceSqrt) {
+                // If the status for this point is 0, update it in any case
+                bool update = (status[i] == 0);
+
+                // ...else check the distance...
+                if (!update) {
+                    float dx = p.X - middle.X;
+                    float dy = p.Y - middle.Y;
+                    float distSqrt = dx * dx + dy * dy;
+
+                    update = distSqrt > errorDistanceSqrt;
+                }
+
+                // And, should we update now?
+                if (update) {
                     SetPointDistance(middle, ref currentPoints[i], maxDistance);
                     UpdatePoint(i);
                     middle = GetMiddle();
