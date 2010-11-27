@@ -12,7 +12,7 @@
     <AssemblyName>SpykeeAudio</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>SpykeeAudio.Sandbox.TestProgram</StartupObject>
+    <StartupObject>SpykeeAudio.Sandbox.Text2SpeechTestProgram</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,6 +75,7 @@
     <Compile Include="Sandbox\SpeechListBoxApplication.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Sandbox\Text2SpeechTestProgram.cs" />
     <Compile Include="SpeechCommandRecognition.cs" />
     <Compile Include="Sandbox\TestProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -102,6 +103,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="TextToSpeech.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

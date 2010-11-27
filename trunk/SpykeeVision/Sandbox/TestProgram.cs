@@ -2,12 +2,58 @@
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using System.Drawing;
 
 namespace SpykeeVision.Sandbox {
     class TestProgram {
         static void Main(string[] args) {
-            TrackMe trackMe = new TrackMe();
-            while (trackMe.Process()) {
+            CameraCapture cameraCapture = new CameraCapture(0);
+
+            TrackMe trackMe = new TrackMe(cameraCapture);
+
+            System.Console.Write("Hot keys: \n" +
+                    "\tESC - quit the program\n" +
+                    "\tr - auto-initialize tracking\n" +
+                    "\tn - switch the \"night\" mode on/off\n" +
+                    "To add/remove a feature point click it\n");
+
+            CvInvoke.cvNamedWindow("LkDemo");
+
+            bool nightMode = false;
+
+            while (true) {
+                cameraCapture.Update();
+                trackMe.Update();
+
+                Image<Bgr, byte> image = cameraCapture.CreateImageBgrCopy();
+                if (nightMode)
+                    CvInvoke.cvZero(image);
+
+                for (int i = 0; i < trackMe.currentPoints.Length; i++) {
+                    image.Draw(new CircleF(new Point((int)trackMe.currentPoints[i].X, (int)trackMe.currentPoints[i].Y), 3), new Bgr(0, 255, 0), -1);
+
+                    PointF middle = trackMe.GetMiddle();
+                    image.Draw(new CircleF(new Point((int)middle.X, (int)middle.Y), 5), new Bgr(0, 0, 255), -1);
+                }
+
+                CvInvoke.cvShowImage("LkDemo", image);
+
+                int c = CvInvoke.cvWaitKey(10);
+                if ((char)c == 27)
+                    break;
+                switch ((char)c) {
+                    case ' ':
+                        trackMe.toggleTracking();
+                        break;
+                    case 'r':
+                        trackMe.initialize();
+                        break;
+                    case 'n':
+                        nightMode = !nightMode;
+                        break;
+                    default:
+                        break;
+                }
             }
 
             /*

@@ -84,6 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CameraCapture.cs" />
     <Compile Include="TrackMe.cs" />
     <Compile Include="Sandbox\TestProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
