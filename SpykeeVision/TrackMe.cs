@@ -15,11 +15,11 @@ namespace SpykeeVision {
         private int maxDistance = 50;
         private float errorDistanceSqrt = 60 * 60;
 
-        private Image<Gray, byte> grey, prev_grey, pyramid, prev_pyramid;
+        private Image<Gray, byte> grey, prevGrey, pyramid, prevPyramid;
 
-        private int win_size = 10;
+        private int winSize = 10;
 
-        public PointF[] currentPoints;
+        private PointF[] currentPoints;
         private PointF[] previousPoints;
         private byte[] status;
         private LKFLOW_TYPE flags = 0;
@@ -28,25 +28,19 @@ namespace SpykeeVision {
 
         private CameraCapture capture;
 
-        public PointF[] CurrentPoints { get { return currentPoints; } }
+        private Random random = new Random();
 
         public TrackMe(CameraCapture capture) {
             this.capture = capture;
 
             grey = new Image<Gray, byte>(capture.FrameSize);
-            prev_grey = new Image<Gray, byte>(capture.FrameSize);
+            prevGrey = new Image<Gray, byte>(capture.FrameSize);
             pyramid = new Image<Gray, byte>(capture.FrameSize);
-            prev_pyramid = new Image<Gray, byte>(capture.FrameSize);
+            prevPyramid = new Image<Gray, byte>(capture.FrameSize);
 
             flags = LKFLOW_TYPE.DEFAULT;
 
             currentPoints = new PointF[0];
-
-            initialize();
-        }
-
-        public void destroy() {
-            CvInvoke.cvDestroyWindow("LkDemo");
         }
 
         public void Update() {
@@ -56,53 +50,51 @@ namespace SpykeeVision {
 
             grey.Bitmap = frame.Bitmap;
 
-            if (currentPoints.Length > 0) {
-                if (tracking) {
-                    float[] trackError;
-                    OpticalFlow.PyrLK(prev_grey, grey, prev_pyramid, pyramid, previousPoints, new Size(win_size, win_size), 3, new MCvTermCriteria(20, 0.03), flags, out currentPoints, out status, out trackError);
-                    flags |= LKFLOW_TYPE.CV_LKFLOW_PYR_A_READY;
+            if ((currentPoints.Length > 0) && tracking) {
+                float[] trackError;
+                OpticalFlow.PyrLK(prevGrey, grey, prevPyramid, pyramid, previousPoints, new Size(winSize, winSize), 3, new MCvTermCriteria(20, 0.03), flags, out currentPoints, out status, out trackError);
+                flags |= LKFLOW_TYPE.CV_LKFLOW_PYR_A_READY;
 
-                    CheckPoints();
-                }
+                CheckPoints();
             }
 
-            prev_grey.Bitmap = grey.Bitmap;
-            prev_pyramid.Bitmap = pyramid.Bitmap;
+            prevGrey.Bitmap = grey.Bitmap;
+            prevPyramid.Bitmap = pyramid.Bitmap;
             previousPoints = currentPoints;
         }
 
-        public void startTracking() {
-            tracking = true;
-        }
-
-        public void stopTracking() {
-            tracking = false;
-            initialize();
-        }
-
-        public void toggleTracking() {
-            tracking = !tracking;
-            if (!tracking) {
-                initialize();
+        public bool Tracking {
+            get {
+                return tracking;
+            }
+            set {
+                tracking = value;
             }
         }
 
-        public void initialize() {
-            currentPoints = new PointF[50];
+        public Size FrameSize { get { return grey.Size; } }
 
-            PointF middle = new PointF(grey.Width / 2, grey.Height / 2);
-            for (int i = 0; i < 50-1; i += 2) {
-                GetPointsAround(middle, ref currentPoints[i], ref currentPoints[i + 1], minDistance, maxDistance);
+        public PointF TrackedPoint {
+            get {
+                return GetMiddle();
             }
+            set {
+                currentPoints = new PointF[50];
 
-            flags = LKFLOW_TYPE.DEFAULT;
+                for (int i = 0; i < 50 - 1; i += 2) {
+                    GetPointsAround(value, ref currentPoints[i], ref currentPoints[i + 1], minDistance, maxDistance);
+                }
 
-            UpdatePoints();
+                flags = LKFLOW_TYPE.DEFAULT;
+
+                UpdatePoints();
+            }
         }
 
-        protected Random random = new Random();
 
-        protected void GetPointAround(PointF middle, ref PointF p1, int minDistance, int maxDistance) {
+        public PointF[] CurrentPoints { get { return currentPoints; } }
+
+        private void GetPointAround(PointF middle, ref PointF p1, int minDistance, int maxDistance) {
             if (p1 == null) p1 = new PointF();
 
             double angle = random.NextDouble() * Math.PI * 2;
@@ -113,7 +105,7 @@ namespace SpykeeVision {
             p1.Y = middle.Y + diffY;
         }
 
-        protected void GetPointsAround(PointF middle, ref PointF p1, ref PointF p2, int minDistance, int maxDistance) {
+        private void GetPointsAround(PointF middle, ref PointF p1, ref PointF p2, int minDistance, int maxDistance) {
             if (p1 == null) p1 = new PointF();
             if (p2 == null) p2 = new PointF();
 
@@ -127,7 +119,7 @@ namespace SpykeeVision {
             p2.Y = middle.Y - diffY;
         }
 
-        protected void SetPointDistance(PointF middle, ref PointF p, int distance) {
+        private void SetPointDistance(PointF middle, ref PointF p, int distance) {
             PointF v = new PointF(p.X - middle.X, p.Y - middle.Y);
             float length = (float)Math.Sqrt(v.X * v.X + v.Y * v.Y);
             v.X /= length;
@@ -137,7 +129,7 @@ namespace SpykeeVision {
             p.Y = middle.Y + v.Y * distance;
         }
 
-        public PointF GetMiddle() {
+        private PointF GetMiddle() {
             PointF middle = new PointF();
 
             foreach (PointF p in currentPoints) {
@@ -178,12 +170,12 @@ namespace SpykeeVision {
         }
 
         private void UpdatePoint(int i) {
-            grey.FindCornerSubPix(new PointF[][] { new PointF[] { currentPoints[i] } }, new Size(win_size, win_size), new Size(-1, -1), new MCvTermCriteria(20, 0.03));
+            grey.FindCornerSubPix(new PointF[][] { new PointF[] { currentPoints[i] } }, new Size(winSize, winSize), new Size(-1, -1), new MCvTermCriteria(20, 0.03));
             previousPoints[i] = currentPoints[i];
         }
 
         private void UpdatePoints() {
-            grey.FindCornerSubPix(new PointF[][] { currentPoints }, new Size(win_size, win_size), new Size(-1, -1), new MCvTermCriteria(20, 0.03));
+            grey.FindCornerSubPix(new PointF[][] { currentPoints }, new Size(winSize, winSize), new Size(-1, -1), new MCvTermCriteria(20, 0.03));
             previousPoints = currentPoints;
         }
     }
