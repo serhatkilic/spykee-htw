@@ -12,7 +12,7 @@
     <AssemblyName>CVTest</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>SpykeeVision.Sandbox.TestProgram</StartupObject>
+    <StartupObject>SpykeeVision.Sandbox.TestNyAR</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraCapture.cs" />
+    <Compile Include="Sandbox\TestNyAR.cs" />
     <Compile Include="TrackMe.cs" />
     <Compile Include="Sandbox\TestProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -100,6 +101,39 @@
     <EmbeddedResource Include="Sandbox\TestForm.resx">
       <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NyARToolkitCSUtils\NyARToolkitCSUtils.csproj">
+      <Project>{1D202933-65C8-4568-9756-87E57D294132}</Project>
+      <Name>NyARToolkitCSUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NyARToolkitCS\NyARToolkitCS.csproj">
+      <Project>{80391577-476D-4DAD-A4F8-F03C726ACBD8}</Project>
+      <Name>NyARToolkitCS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\320x240ABGR.raw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="data\320x240NyId.raw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="data\camera_para.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="data\NyIdMarker_template.pdf" />
+    <None Include="data\patt.hiro">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="data\patt.kanji">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="data\pattHiro.pdf" />
+    <None Include="data\pattKanji.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\NyIdMarker.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

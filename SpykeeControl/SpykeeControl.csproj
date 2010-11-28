@@ -48,6 +48,14 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Emgu.CV, Version=2.1.0.793, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\libs\dotNET\emgucv 2.1.0.793\bin\Emgu.CV.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.UI, Version=2.1.0.793, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\libs\dotNET\emgucv 2.1.0.793\bin\Emgu.CV.UI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -62,6 +70,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Answer\SpykeeAnswerBattery.cs" />
+    <Compile Include="Answer\SpykeeAnswerDocked.cs" />
+    <Compile Include="Answer\SpykeeAnswerFactory.cs" />
+    <Compile Include="Answer\SpykeeAnswerImage.cs" />
+    <Compile Include="Answer\SpykeeAnswerLogin.cs" />
+    <Compile Include="Answer\SpykeeAnswerVoIP.cs" />
+    <Compile Include="PeekableStream.cs" />
+    <Compile Include="SpykeeAnswer.cs" />
     <Compile Include="Command\SpykeCommandLogin.cs" />
     <Compile Include="Command\SpykeCommandMoveStop.cs" />
     <Compile Include="Command\SpykeCommandMove.cs" />

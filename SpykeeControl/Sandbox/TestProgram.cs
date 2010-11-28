@@ -8,13 +8,24 @@ using SpykeeControl.Command;
 namespace SpykeeControl.Sandbox {
     class TestProgram {
         static void Main(string[] args) {
+            TestProgram testProgram = new TestProgram();
+            testProgram.Start();
+        }
+
+        private void Start() {
             Spykee spykee = new Spykee();
+
+            spykee.OnSpykeeAnswer += SpykeeAnswerHandle;
+
             spykee.IpAddress = "172.17.6.1";
             spykee.Port = 9000;
             spykee.Connect();
 
             spykee.Execute(new SpykeeCommandLogin("admin", "0bstkuchen"));
-            spykee.ListenToAnswers();
+            spykee.StartListenToAnswersThread();
+            while (true) {
+                //spykee.ListenToAnswers();
+            }
 
             /*
             while (true) {
@@ -24,7 +35,7 @@ namespace SpykeeControl.Sandbox {
                 //Thread.Sleep(1000);
             }
              */
-
+            /*
             int speed = 50;
             spykee.Execute(new SpykeeCommandMove(SpykeeCommandMove.Directions.Left, speed));
             spykee.ListenToAnswers();
@@ -46,7 +57,11 @@ namespace SpykeeControl.Sandbox {
             spykee.Execute(new SpykeCommandMove(SpykeCommandMove.Directions.Backwards, 50));
             Thread.Sleep(500);
              */
-            spykee.Execute(new SpykeeCommandMoveStop());
+            //spykee.Execute(new SpykeeCommandMoveStop());
+        }
+
+        public void SpykeeAnswerHandle(SpykeeAnswer answer) {
+            System.Console.WriteLine(answer.ToString());
         }
     }
 }
