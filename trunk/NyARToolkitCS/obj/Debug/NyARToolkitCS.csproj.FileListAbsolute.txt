@@ -1,0 +1,7 @@
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\bin\Debug\NyARToolkitCS.dll
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\bin\Debug\NyARToolkitCS.pdb
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\obj\Debug\ResolveAssemblyReference.cache
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\obj\Debug\jp.nyatla.nyartoolkit.Properties.Resources.resources
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\obj\Debug\NyARToolkitCS.csproj.GenerateResource.Cache
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\obj\Debug\NyARToolkitCS.dll
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCS\obj\Debug\NyARToolkitCS.pdb

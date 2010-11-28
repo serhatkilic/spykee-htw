@@ -1,0 +1,8 @@
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\bin\Debug\NyARToolkitCSUtils.dll
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\bin\Debug\NyARToolkitCSUtils.pdb
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\bin\Debug\DirectShowLib-2005.dll
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\bin\Debug\NyARToolkitCS.dll
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\bin\Debug\NyARToolkitCS.pdb
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\obj\Debug\ResolveAssemblyReference.cache
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\obj\Debug\NyARToolkitCSUtils.dll
+D:\dev\libs\dotNET\NyARToolkitCS-2.5.2\forFW2.0\NyARToolkitCSUtils\obj\Debug\NyARToolkitCSUtils.pdb
